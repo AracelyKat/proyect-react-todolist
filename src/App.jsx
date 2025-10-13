@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import TasksPage from './components/pages/TasksPage'; // <-- importamos el TasksPage
+
 import './App.css';
 
 function App() {
@@ -45,17 +47,10 @@ function App() {
               </div>
             </div>
           } />
-          <Route path="/tareas" element={
-            <div>
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="text-primary">Gestión de Tareas</h2>
-                <button className="btn btn-primary">Nueva Tarea</button>
-              </div>
-              <div className="alert alert-info">
-                Aquí podrás gestionar todas tus tareas. Funcionalidad en desarrollo.
-              </div>
-            </div>
-          } />
+
+          {/* Aquí reemplazamos el contenido hardcodeado por el componente TasksPage */}
+          <Route path="/tareas" element={<TasksPage />} />
+
           <Route path="/categorias" element={
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
@@ -67,6 +62,7 @@ function App() {
               </div>
             </div>
           } />
+
           <Route path="/etiquetas" element={
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
