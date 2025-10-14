@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import TasksPage from './components/pages/TasksPage'; // <-- importamos el TasksPage
+import TasksPage from './components/pages/TasksPage';
+import CategoriesPage from './components/pages/CategoriesPage';
 
 import './App.css';
 
@@ -48,21 +49,8 @@ function App() {
             </div>
           } />
 
-          {/* Aquí reemplazamos el contenido hardcodeado por el componente TasksPage */}
           <Route path="/tareas" element={<TasksPage />} />
-
-          <Route path="/categorias" element={
-            <div>
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="text-primary">Gestión de Categorías</h2>
-                <button className="btn btn-primary">Nueva Categoría</button>
-              </div>
-              <div className="alert alert-info">
-                Aquí podrás gestionar las categorías de tus tareas. Funcionalidad en desarrollo.
-              </div>
-            </div>
-          } />
-
+          <Route path="/categorias" element={<CategoriesPage />} />
           <Route path="/etiquetas" element={
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
