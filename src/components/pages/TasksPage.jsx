@@ -1,18 +1,13 @@
 import { useEffect, useState } from 'react';
-import { getAll } from '../../services/TaskService';
+import { getAll } from '../../../services/TaskService';
 
 function TasksPage() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
-      try {
-        const result = await getAll();
-        console.log("Lista de tareas:", result.data);
-        setTasks(result.data || []);
-      } catch (error) {
-        console.error("Error al obtener tareas:", error);
-      }
+      const result = await getAll().catch(() => null);
+      setTasks(result?.data || []);
     };
 
     fetchTasks();
