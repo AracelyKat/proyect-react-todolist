@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import TasksPage from './components/pages/TasksPage';
-import CategoriesPage from './components/pages/CategoriesPage';
+import CategoriesPage from './components/pages/categories/CategoriesPage';
 
 import './App.css';
 
