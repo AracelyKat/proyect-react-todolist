@@ -1,5 +1,4 @@
-const API_URL = "http://127.0.0.1:8000/api";
-const TOKEN = "20|42Xeq16I8GNBloWtyqDf5ydQhlEtoZ1XdTTA4prq131efd7f";
+import { API_URL, TOKEN } from './constants';
 
 export const getAll = async () => {
   try {
@@ -51,6 +50,24 @@ export const updateCategory = async (id, name) => {
     return await response.json();
   } catch (error) {
     console.error(`Error al actualizar categoría ${id}:`, error);
+    return null;
+  }
+};
+
+export const deleteCategory = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/categories/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${TOKEN}`,
+      },
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error al eliminar categoría ${id}:`, error);
     return null;
   }
 };
