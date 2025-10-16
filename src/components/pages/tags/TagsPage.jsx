@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getAll } from '../../../services/TagService';
+import { getAll, deleteTag } from '../../../services/TagService';
 import CreateTag from './CreateTag';
-import EditTag from './EditTag'; 
+import EditTag from './EditTag';
 
 function TagsPage() {
   const [tags, setTags] = useState([]);
@@ -28,6 +28,15 @@ function TagsPage() {
   useEffect(() => {
     fetchTags();
   }, []);
+
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`¿Estás seguro de que quieres eliminar la etiqueta "${name}"?`)) {
+      const result = await deleteTag(id);
+      if (result?.message) {
+        fetchTags();
+      }
+    }
+  };
 
   const startEditing = (id) => {
     setEditingId(id);
@@ -92,12 +101,20 @@ function TagsPage() {
                   {editingId === tag.id ? (
                     <span className="text-muted">Editando...</span>
                   ) : (
-                    <button 
-                      className="btn btn-outline-primary btn-sm"
-                      onClick={() => startEditing(tag.id)}
-                    >
-                      Editar
-                    </button>
+                    <div className="btn-group btn-group-sm">
+                      <button 
+                        className="btn btn-outline-primary"
+                        onClick={() => startEditing(tag.id)}
+                      >
+                        Editar
+                      </button>
+                      <button 
+                        className="btn btn-outline-danger"
+                        onClick={() => handleDelete(tag.id, tag.name)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
