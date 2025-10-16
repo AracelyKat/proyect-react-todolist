@@ -1,6 +1,4 @@
-const API_URL = "http://127.0.0.1:8000/api";
-const TOKEN = "18|7H3bwcu642f9T7OTLPmuUwz0dy5lzRyECR3nrYfN34fa5c67";
-
+import { API_URL, TOKEN } from './constants';
 export const getAll = async () => {
   try {
     const response = await fetch(`${API_URL}/categories`, {
@@ -32,6 +30,25 @@ export const createCategory = async (name) => {
     return await response.json();
   } catch (error) {
     console.error("Error al crear categoría:", error);
+    return null;
+  }
+};
+
+export const updateCategory = async (id, name) => {
+  try {
+    const response = await fetch(`${API_URL}/categories/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${TOKEN}`,
+      },
+      body: JSON.stringify({ name }),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error al actualizar categoría ${id}:`, error);
     return null;
   }
 };
