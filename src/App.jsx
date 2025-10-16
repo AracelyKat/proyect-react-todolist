@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import TasksPage from './components/pages/TasksPage';
 import CategoriesPage from './components/pages/categories/CategoriesPage';
+import ShowCategoryPage from './components/pages/categories/showCategory';
 
 import './App.css';
 
@@ -51,6 +52,7 @@ function App() {
 
           <Route path="/tareas" element={<TasksPage />} />
           <Route path="/categorias" element={<CategoriesPage />} />
+          <Route path="/categorias/:id" element={<ShowCategoryPage />} />
           <Route path="/etiquetas" element={
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
