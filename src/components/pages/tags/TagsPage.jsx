@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getAll } from '../../../services/TagService';
+import CreateTag from './CreateTag';
 
 function TagsPage() {
   const [tags, setTags] = useState([]);
@@ -39,6 +40,7 @@ function TagsPage() {
   return (
     <div>
       <h2 className="text-primary mb-4">Gestión de Etiquetas</h2>
+      <CreateTag onCreated={fetchTags} />
 
       <table className="table table-bordered table-hover">
         <thead className="table-light">
