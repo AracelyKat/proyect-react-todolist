@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAll, deleteCategory } from '../../../services/CategoryService';
 import CreateCategory from './CreateCategory';
 import EditCategory from './EditCategory';
@@ -6,6 +7,7 @@ import EditCategory from './EditCategory';
 function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const navigate = useNavigate();
 
   const fetchCategories = async () => {
     const result = await getAll().catch(() => null);
@@ -40,6 +42,10 @@ function CategoriesPage() {
   const handleUpdated = () => {
     setEditingId(null);
     fetchCategories();
+  };
+
+  const handleView = (id) => {
+    navigate(`/categorias/${id}`);
   };
 
   return (
@@ -81,6 +87,12 @@ function CategoriesPage() {
                     <span className="text-muted">Editando...</span>
                   ) : (
                     <div className="btn-group btn-group-sm">
+                      <button 
+                        className="btn btn-outline-info"
+                        onClick={() => handleView(cat.id)}
+                      >
+                        Ver
+                      </button>
                       <button 
                         className="btn btn-outline-primary"
                         onClick={() => startEditing(cat.id)}
