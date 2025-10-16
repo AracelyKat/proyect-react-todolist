@@ -34,3 +34,22 @@ export const createTag = async (name) => {
     return null;
   }
 };
+
+export const updateTag = async (id, name) => {
+  try {
+    const response = await fetch(`${API_URL}/tags/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${TOKEN}`,
+      },
+      body: JSON.stringify({ name }),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error al actualizar etiqueta ${id}:`, error);
+    return null;
+  }
+};
