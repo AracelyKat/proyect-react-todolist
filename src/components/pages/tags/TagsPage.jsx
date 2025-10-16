@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getAll } from '../../../services/TagService';
 import CreateTag from './CreateTag';
+import EditTag from './EditTag'; 
 
 function TagsPage() {
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
 
   const fetchTags = async () => {
     try {
@@ -27,6 +29,19 @@ function TagsPage() {
     fetchTags();
   }, []);
 
+  const startEditing = (id) => {
+    setEditingId(id);
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+  };
+
+  const handleUpdated = () => {
+    setEditingId(null);
+    fetchTags();
+  };
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center">
@@ -40,6 +55,7 @@ function TagsPage() {
   return (
     <div>
       <h2 className="text-primary mb-4">Gestión de Etiquetas</h2>
+
       <CreateTag onCreated={fetchTags} />
 
       <table className="table table-bordered table-hover">
@@ -47,12 +63,13 @@ function TagsPage() {
           <tr>
             <th>#</th>
             <th>Nombre</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {tags.length === 0 ? (
             <tr>
-              <td colSpan="2" className="text-center text-muted">
+              <td colSpan="3" className="text-center text-muted">
                 No hay etiquetas registradas
               </td>
             </tr>
@@ -60,7 +77,29 @@ function TagsPage() {
             tags.map((tag, index) => (
               <tr key={tag.id}>
                 <td>{index + 1}</td>
-                <td>{tag.name}</td>
+                <td>
+                  {editingId === tag.id ? (
+                    <EditTag 
+                      tag={tag}
+                      onUpdated={handleUpdated}
+                      onCancel={cancelEditing}
+                    />
+                  ) : (
+                    tag.name
+                  )}
+                </td>
+                <td>
+                  {editingId === tag.id ? (
+                    <span className="text-muted">Editando...</span>
+                  ) : (
+                    <button 
+                      className="btn btn-outline-primary btn-sm"
+                      onClick={() => startEditing(tag.id)}
+                    >
+                      Editar
+                    </button>
+                  )}
+                </td>
               </tr>
             ))
           )}
