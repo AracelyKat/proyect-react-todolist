@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAll, deleteTag } from '../../../services/TagService';
 import CreateTag from './CreateTag';
 import EditTag from './EditTag';
@@ -7,6 +8,7 @@ function TagsPage() {
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
+  const navigate = useNavigate(); 
 
   const fetchTags = async () => {
     try {
@@ -49,6 +51,10 @@ function TagsPage() {
   const handleUpdated = () => {
     setEditingId(null);
     fetchTags();
+  };
+
+  const handleView = (id) => {
+    navigate(`/etiquetas/${id}`);
   };
 
   if (loading) {
@@ -102,6 +108,12 @@ function TagsPage() {
                     <span className="text-muted">Editando...</span>
                   ) : (
                     <div className="btn-group btn-group-sm">
+                      <button 
+                        className="btn btn-outline-info"
+                        onClick={() => handleView(tag.id)}
+                      >
+                        Ver
+                      </button>
                       <button 
                         className="btn btn-outline-primary"
                         onClick={() => startEditing(tag.id)}
