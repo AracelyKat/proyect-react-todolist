@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import TasksPage from './components/pages/TasksPage';
 import CategoriesPage from './components/pages/categories/CategoriesPage';
 import ShowCategoryPage from './components/pages/categories/showCategory';
+import TagsPage from './components/pages/tags/TagsPage';
 
 import './App.css';
 
@@ -53,17 +54,7 @@ function App() {
           <Route path="/tareas" element={<TasksPage />} />
           <Route path="/categorias" element={<CategoriesPage />} />
           <Route path="/categorias/:id" element={<ShowCategoryPage />} />
-          <Route path="/etiquetas" element={
-            <div>
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="text-primary">Gestión de Etiquetas</h2>
-                <button className="btn btn-primary">Nueva Etiqueta</button>
-              </div>
-              <div className="alert alert-info">
-                Aquí podrás gestionar las etiquetas de tus tareas. Funcionalidad en desarrollo.
-              </div>
-            </div>
-          } />
+          <Route path="/etiquetas" element={<TagsPage />} />
         </Routes>
       </Layout>
     </Router>
