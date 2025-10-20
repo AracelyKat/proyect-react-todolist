@@ -71,3 +71,19 @@ export const deleteTag = async (id) => {
     return null;
   }
 };
+
+export const getById = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/tags/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${TOKEN}`,
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error(`Error en getById(${id}) de etiquetas:`, error);
+    return null;
+  }
+};
