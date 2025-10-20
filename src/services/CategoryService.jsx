@@ -70,3 +70,19 @@ export const deleteCategory = async (id) => {
     return null;
   }
 };
+
+export const getById = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/categories/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${TOKEN}`,
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error(`Error en getById(${id}) de categorías:`, error);
+    return null;
+  }
+};
