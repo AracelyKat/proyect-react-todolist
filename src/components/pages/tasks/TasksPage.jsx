@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAll } from '../../../services/TaskService';
+import { getAll, deleteTask } from '../../../services/TaskService';
 
 function TasksPage() {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(null);
 
   const fetchTasks = async () => {
     try {
@@ -33,6 +34,24 @@ function TasksPage() {
 
   const handleCreate = () => {
     navigate('/tareas/crear');
+  };
+
+  const handleDelete = async (taskId, taskTitle) => {
+    if (!window.confirm(`¿Estás seguro de que quieres eliminar la tarea "${taskTitle}"?`)) {
+      return;
+    }
+
+    try {
+      setDeleteLoading(taskId);
+      await deleteTask(taskId);
+      
+      await fetchTasks();
+      
+    } catch {
+      setError('Error al eliminar la tarea');
+    } finally {
+      setDeleteLoading(null);
+    }
   };
 
   if (loading) {
@@ -72,13 +91,13 @@ function TasksPage() {
             <th>Categoría</th>
             <th>Etiquetas</th>
             <th>Estado</th>
-            <th>Acciones</th> 
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {tasks.length === 0 ? (
             <tr>
-              <td colSpan="6" className="text-center text-muted">
+              <td colSpan="7" className="text-center text-muted">
                 No hay tareas registradas
               </td>
             </tr>
@@ -118,14 +137,33 @@ function TasksPage() {
                     <button 
                       className="btn btn-sm btn-outline-info"
                       onClick={() => navigate(`/tareas/${task.id}`)}
+                      title="Ver detalles"
                     >
-                      Ver
+                      <i className="bi bi-eye"></i> Ver
                     </button>
                     <button 
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => navigate(`/tareas/editar/${task.id}`)}
+                      title="Editar tarea"
                     >
-                      Editar
+                      <i className="bi bi-pencil"></i> Editar
+                    </button>
+                    <button 
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => handleDelete(task.id, task.title)}
+                      disabled={deleteLoading === task.id}
+                      title="Eliminar tarea"
+                    >
+                      {deleteLoading === task.id ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm" role="status"></span>
+                          Eliminando...
+                        </>
+                      ) : (
+                        <>
+                          <i className="bi bi-trash"></i> Eliminar
+                        </>
+                      )}
                     </button>
                   </div>
                 </td>
