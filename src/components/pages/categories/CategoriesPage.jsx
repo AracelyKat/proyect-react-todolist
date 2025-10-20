@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAll } from '../../../services/CategoryService';
+import { getAll, deleteCategory } from '../../../services/CategoryService';
 import CreateCategory from './CreateCategory';
 import EditCategory from './EditCategory';
 
@@ -19,6 +19,15 @@ function CategoriesPage() {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`¿Estás seguro de que quieres eliminar la categoría "${name}"?`)) {
+      const result = await deleteCategory(id);
+      if (result?.message) {
+        fetchCategories();
+      }
+    }
+  };
 
   const startEditing = (id) => {
     setEditingId(id);
@@ -71,12 +80,20 @@ function CategoriesPage() {
                   {editingId === cat.id ? (
                     <span className="text-muted">Editando...</span>
                   ) : (
-                    <button 
-                      className="btn btn-outline-primary btn-sm"
-                      onClick={() => startEditing(cat.id)}
-                    >
-                      Editar
-                    </button>
+                    <div className="btn-group btn-group-sm">
+                      <button 
+                        className="btn btn-outline-primary"
+                        onClick={() => startEditing(cat.id)}
+                      >
+                        Editar
+                      </button>
+                      <button 
+                        className="btn btn-outline-danger"
+                        onClick={() => handleDelete(cat.id, cat.name)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>

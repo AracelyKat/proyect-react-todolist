@@ -52,3 +52,21 @@ export const updateCategory = async (id, name) => {
     return null;
   }
 };
+
+export const deleteCategory = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/categories/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${TOKEN}`,
+      },
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error al eliminar categoría ${id}:`, error);
+    return null;
+  }
+};
