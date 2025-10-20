@@ -114,12 +114,20 @@ function TasksPage() {
                   </span>
                 </td>
                 <td>
-                  <button 
-                    className="btn btn-sm btn-outline-primary"
-                    onClick={() => navigate(`/tareas/editar/${task.id}`)}
-                  >
-                    Editar
-                  </button>
+                  <div className="d-flex gap-1">
+                    <button 
+                      className="btn btn-sm btn-outline-info"
+                      onClick={() => navigate(`/tareas/${task.id}`)}
+                    >
+                      Ver
+                    </button>
+                    <button 
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => navigate(`/tareas/editar/${task.id}`)}
+                    >
+                      Editar
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))

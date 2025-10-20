@@ -7,6 +7,7 @@ import TagsPage from './components/pages/tags/TagsPage';
 import ShowTagPage from './components/pages/tags/ShowTagPage';
 import CreateTaskPage from './components/pages/tasks/CreateTaskPage';
 import EditTaskPage from "./components/pages/tasks/EditTaskPage";
+import ShowTask from "./components/pages/tasks/ShowTask";
 
 import './App.css';
 
@@ -61,6 +62,7 @@ function App() {
           <Route path="/etiquetas/:id" element={<ShowTagPage />} />
           <Route path="/tareas/crear" element={<CreateTaskPage />} />
           <Route path="/tareas/editar/:id" element={<EditTaskPage />} />
+          <Route path="/tareas/:id" element={<ShowTask />} />
         </Routes>
       </Layout>
     </Router>
