@@ -1,32 +1,41 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAll, deleteCategory } from '../../../services/CategoryService';
-import CreateCategory from './CreateCategory';
-import EditCategory from './EditCategory';
+import { getAll, deleteTag } from '../../../services/TagService';
+import CreateTag from './CreateTag';
+import EditTag from './EditTag';
 
-function CategoriesPage() {
-  const [categories, setCategories] = useState([]);
+function TagsPage() {
+  const [tags, setTags] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
-  const fetchCategories = async () => {
-    const result = await getAll().catch(() => null);
-    if (result?.data) {
-      setCategories(result.data);
-    } else {
-      setCategories([]);
+  const fetchTags = async () => {
+    try {
+      setLoading(true);
+      const result = await getAll();
+      if (result?.data) {
+        setTags(result.data);
+      } else {
+        setTags([]);
+      }
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+      setTags([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchTags();
   }, []);
 
   const handleDelete = async (id, name) => {
-    if (window.confirm(`¿Estás seguro de que quieres eliminar la categoría "${name}"?`)) {
-      const result = await deleteCategory(id);
+    if (window.confirm(`¿Estás seguro de que quieres eliminar la etiqueta "${name}"?`)) {
+      const result = await deleteTag(id);
       if (result?.message) {
-        fetchCategories();
+        fetchTags();
       }
     }
   };
@@ -41,18 +50,28 @@ function CategoriesPage() {
 
   const handleUpdated = () => {
     setEditingId(null);
-    fetchCategories();
+    fetchTags();
   };
 
   const handleView = (id) => {
-    navigate(`/categorias/${id}`);
+    navigate(`/etiquetas/${id}`);
   };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h2 className="text-primary mb-4">Gestión de Categorías</h2>
+      <h2 className="text-primary mb-4">Gestión de Etiquetas</h2>
 
-      <CreateCategory onCreated={fetchCategories} />
+      <CreateTag onCreated={fetchTags} />
 
       <table className="table table-bordered table-hover">
         <thead className="table-light">
@@ -63,45 +82,47 @@ function CategoriesPage() {
           </tr>
         </thead>
         <tbody>
-          {categories.length === 0 ? (
+          {tags.length === 0 ? (
             <tr>
-              <td colSpan="3" className="text-center text-muted">No hay categorías registradas</td>
+              <td colSpan="3" className="text-center text-muted">
+                No hay etiquetas registradas
+              </td>
             </tr>
           ) : (
-            categories.map((cat, index) => (
-              <tr key={cat.id}>
+            tags.map((tag, index) => (
+              <tr key={tag.id}>
                 <td>{index + 1}</td>
                 <td>
-                  {editingId === cat.id ? (
-                    <EditCategory 
-                      category={cat}
+                  {editingId === tag.id ? (
+                    <EditTag 
+                      tag={tag}
                       onUpdated={handleUpdated}
                       onCancel={cancelEditing}
                     />
                   ) : (
-                    cat.name
+                    tag.name
                   )}
                 </td>
                 <td>
-                  {editingId === cat.id ? (
+                  {editingId === tag.id ? (
                     <span className="text-muted">Editando...</span>
                   ) : (
                     <div className="btn-group btn-group-sm">
                       <button 
                         className="btn btn-outline-info"
-                        onClick={() => handleView(cat.id)}
+                        onClick={() => handleView(tag.id)}
                       >
                         Ver
                       </button>
                       <button 
                         className="btn btn-outline-primary"
-                        onClick={() => startEditing(cat.id)}
+                        onClick={() => startEditing(tag.id)}
                       >
                         Editar
                       </button>
                       <button 
                         className="btn btn-outline-danger"
-                        onClick={() => handleDelete(cat.id, cat.name)}
+                        onClick={() => handleDelete(tag.id, tag.name)}
                       >
                         Eliminar
                       </button>
@@ -117,4 +138,4 @@ function CategoriesPage() {
   );
 }
 
-export default CategoriesPage;
+export default TagsPage;
