@@ -53,3 +53,21 @@ export const updateTag = async (id, name) => {
     return null;
   }
 };
+
+export const deleteTag = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/tags/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${TOKEN}`,
+      },
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error al eliminar etiqueta ${id}:`, error);
+    return null;
+  }
+};
