@@ -1,28 +1,67 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAll } from '../../../services/TaskService';
 
 function TasksPage() {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const result = await getAll();
+      
+      if (result?.data) {
+        setTasks(result.data);
+      } else {
+        setTasks([]);
+      }
+    } catch {
+      setError('Error al cargar las tareas');
+      setTasks([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const result = await getAll();
-        setTasks(result.data || []);
-      } catch (error) {
-        console.error("Error al obtener tareas:", error);
-      }
-    };
-
     fetchTasks();
   }, []);
+
+  const handleCreate = () => {
+    navigate('/tareas/crear');
+  };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="text-primary">Gestión de Tareas</h2>
-        <button className="btn btn-primary">Nueva Tarea</button>
+        <h2 className="text-primary mb-0">Gestión de Tareas</h2>
+        <button 
+          className="btn btn-success"
+          onClick={handleCreate}
+        >
+          Crear Tarea
+        </button>
       </div>
+
+      {error && (
+        <div className="alert alert-danger mb-4">
+          {error}
+        </div>
+      )}
 
       <table className="table table-bordered table-hover">
         <thead className="table-light">
@@ -38,25 +77,41 @@ function TasksPage() {
         <tbody>
           {tasks.length === 0 ? (
             <tr>
-              <td colSpan="6" className="text-center text-muted">No hay tareas registradas</td>
+              <td colSpan="6" className="text-center text-muted">
+                No hay tareas registradas
+              </td>
             </tr>
           ) : (
             tasks.map((task, index) => (
               <tr key={task.id}>
                 <td>{index + 1}</td>
                 <td>{task.title}</td>
-                <td>{task.description || '—'}</td>
-                <td>{task.category?.name || 'Sin categoría'}</td>
+                <td>{task.description || '-'}</td>
                 <td>
-                  {task.tags?.length > 0
-                    ? task.tags.map(tag => (
-                        <span key={tag.id} className="badge bg-secondary me-1">
+                  {task.category ? (
+                    <span className="badge bg-primary">{task.category.name}</span>
+                  ) : (
+                    '-'
+                  )}
+                </td>
+                <td>
+                  {task.tags && task.tags.length > 0 ? (
+                    <div className="d-flex flex-wrap gap-1">
+                      {task.tags.map(tag => (
+                        <span key={tag.id} className="badge bg-secondary">
                           {tag.name}
                         </span>
-                      ))
-                    : '—'}
+                      ))}
+                    </div>
+                  ) : (
+                    '-'
+                  )}
                 </td>
-                <td>{task.status === 'completada' ? 'Completada' : 'Incompleta'}</td>
+                <td>
+                  <span className={`badge ${task.status === 'completada' ? 'bg-success' : 'bg-warning'}`}>
+                    {task.status === 'completada' ? 'Completada' : 'Incompleta'}
+                  </span>
+                </td>
               </tr>
             ))
           )}

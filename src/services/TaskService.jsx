@@ -1,19 +1,25 @@
-const API_URL = "http://127.0.0.1:8000/api";
-const TOKEN = "18|7H3bwcu642f9T7OTLPmuUwz0dy5lzRyECR3nrYfN34fa5c67";
+import { API_URL, TOKEN } from './constants';
 
 export const getAll = async () => {
-  try {
-    const response = await fetch(`${API_URL}/tasks`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
-      },
-    });
-    return await response.json();
+  const response = await fetch(`${API_URL}/tasks`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": `Bearer ${TOKEN}`,
+    },
+  });
+  return await response.json();
+};
 
-  } catch (error) {
-    console.error("Error en getAll():", error);
-    return [];
-  }
+export const createTask = async (taskData) => {
+  const response = await fetch(`${API_URL}/tasks`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": `Bearer ${TOKEN}`,
+    },
+    body: JSON.stringify(taskData),
+  });
+  return await response.json();
 };
