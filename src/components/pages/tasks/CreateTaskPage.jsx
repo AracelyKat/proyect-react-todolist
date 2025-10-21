@@ -90,13 +90,11 @@ function CreateTaskPage() {
     
     setFormData(prev => {
       if (checked) {
-        // Agregar el tag_id al array
         return {
           ...prev,
           tag_ids: [...prev.tag_ids, tagId]
         };
       } else {
-        // Remover el tag_id del array
         return {
           ...prev,
           tag_ids: prev.tag_ids.filter(id => id !== tagId)
