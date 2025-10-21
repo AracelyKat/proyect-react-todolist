@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAll, deleteTask } from '../../../services/TaskService';
+import { getAll, deleteTask, updateTask } from '../../../services/TaskService';
 
 function TasksPage() {
   const navigate = useNavigate();
@@ -8,6 +8,7 @@ function TasksPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(null);
+  const [updateLoading, setUpdateLoading] = useState(null);
 
   const fetchTasks = async () => {
     try {
@@ -44,13 +45,37 @@ function TasksPage() {
     try {
       setDeleteLoading(taskId);
       await deleteTask(taskId);
-      
       await fetchTasks();
-      
     } catch {
       setError('Error al eliminar la tarea');
     } finally {
       setDeleteLoading(null);
+    }
+  };
+
+  const handleStatusChange = async (taskId, currentStatus) => {
+    try {
+      setUpdateLoading(taskId);
+      
+      const newStatus = currentStatus === 'completada' ? 'incompleto' : 'completada';
+      
+      await updateTask(taskId, {
+        status: newStatus
+      });
+
+      setTasks(prevTasks => 
+        prevTasks.map(task => 
+          task.id === taskId 
+            ? { ...task, status: newStatus }
+            : task
+        )
+      );
+      
+    } catch {
+      setError('Error al actualizar el estado de la tarea');
+      await fetchTasks();
+    } finally {
+      setUpdateLoading(null);
     }
   };
 
@@ -85,28 +110,65 @@ function TasksPage() {
       <table className="table table-bordered table-hover">
         <thead className="table-light">
           <tr>
-            <th>#</th>
+            <th width="50">#</th>
+            <th width="80">Completada</th>
             <th>Título</th>
             <th>Descripción</th>
+            <th>Estado</th>
             <th>Categoría</th>
             <th>Etiquetas</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th width="200">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {tasks.length === 0 ? (
             <tr>
-              <td colSpan="7" className="text-center text-muted">
+              <td colSpan="8" className="text-center text-muted">
                 No hay tareas registradas
               </td>
             </tr>
           ) : (
             tasks.map((task, index) => (
-              <tr key={task.id}>
+              <tr key={task.id} className={task.status === 'completada' ? 'table-success' : ''}>
                 <td>{index + 1}</td>
-                <td>{task.title}</td>
-                <td>{task.description || '-'}</td>
+                <td>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={task.status === 'completada'}
+                      onChange={() => handleStatusChange(task.id, task.status)}
+                      disabled={updateLoading === task.id}
+                      id={`status-${task.id}`}
+                    />
+                    <label 
+                      className="form-check-label visually-hidden" 
+                      htmlFor={`status-${task.id}`}
+                    >
+                      {task.status === 'completada' ? 'Completada' : 'Pendiente'}
+                    </label>
+                    {updateLoading === task.id && (
+                      <div className="spinner-border spinner-border-sm ms-1" role="status">
+                        <span className="visually-hidden">Actualizando...</span>
+                      </div>
+                    )}
+                  </div>
+                </td>
+                <td>
+                  <div className={`${task.status === 'completada' ? 'text-decoration-line-through text-muted' : ''}`}>
+                    {task.title}
+                  </div>
+                </td>
+                <td>
+                  <div className={`${task.status === 'completada' ? 'text-decoration-line-through text-muted' : ''}`}>
+                    {task.description || '-'}
+                  </div>
+                </td>
+                <td>
+                  <span className={`badge ${task.status === 'completada' ? 'bg-success' : 'bg-warning'}`}>
+                    {task.status === 'completada' ? 'Completada' : 'Pendiente'}
+                  </span>
+                </td>
                 <td>
                   {task.category ? (
                     <span className="badge bg-primary">{task.category.name}</span>
@@ -128,25 +190,20 @@ function TasksPage() {
                   )}
                 </td>
                 <td>
-                  <span className={`badge ${task.status === 'completada' ? 'bg-success' : 'bg-warning'}`}>
-                    {task.status === 'completada' ? 'Completada' : 'Incompleta'}
-                  </span>
-                </td>
-                <td>
                   <div className="d-flex gap-1">
                     <button 
                       className="btn btn-sm btn-outline-info"
                       onClick={() => navigate(`/tareas/${task.id}`)}
                       title="Ver detalles"
                     >
-                      <i className="bi bi-eye"></i> Ver
+                      Ver
                     </button>
                     <button 
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => navigate(`/tareas/editar/${task.id}`)}
                       title="Editar tarea"
                     >
-                      <i className="bi bi-pencil"></i> Editar
+                      Editar
                     </button>
                     <button 
                       className="btn btn-sm btn-outline-danger"
@@ -155,14 +212,9 @@ function TasksPage() {
                       title="Eliminar tarea"
                     >
                       {deleteLoading === task.id ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm" role="status"></span>
-                          Eliminando...
-                        </>
+                        <span className="spinner-border spinner-border-sm" role="status"></span>
                       ) : (
-                        <>
-                          <i className="bi bi-trash"></i> Eliminar
-                        </>
+                        'Eliminar'
                       )}
                     </button>
                   </div>
@@ -172,6 +224,16 @@ function TasksPage() {
           )}
         </tbody>
       </table>
+
+      {tasks.length > 0 && (
+        <div className="mt-3">
+          <small className="text-muted">
+            Total: {tasks.length} | 
+            Completadas: {tasks.filter(t => t.status === 'completada').length} | 
+            Pendientes: {tasks.filter(t => t.status === 'incompleto').length}
+          </small>
+        </div>
+      )}
     </div>
   );
 }
