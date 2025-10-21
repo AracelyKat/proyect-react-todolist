@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import TasksPage from './components/pages/TasksPage';
+import TasksPage from './components/pages/tasks/TasksPage';
 import CategoriesPage from './components/pages/categories/CategoriesPage';
 import ShowCategoryPage from './components/pages/categories/showCategory';
 import TagsPage from './components/pages/tags/TagsPage';
 import ShowTagPage from './components/pages/tags/ShowTagPage';
+import CreateTaskPage from './components/pages/tasks/CreateTaskPage';
 
 import './App.css';
 
@@ -57,6 +58,7 @@ function App() {
           <Route path="/categorias/:id" element={<ShowCategoryPage />} />
           <Route path="/etiquetas" element={<TagsPage />} />
           <Route path="/etiquetas/:id" element={<ShowTagPage />} />
+          <Route path="/tareas/crear" element={<CreateTaskPage />} />
         </Routes>
       </Layout>
     </Router>
