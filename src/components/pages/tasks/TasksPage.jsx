@@ -72,6 +72,7 @@ function TasksPage() {
             <th>Categoría</th>
             <th>Etiquetas</th>
             <th>Estado</th>
+            <th>Acciones</th> 
           </tr>
         </thead>
         <tbody>
@@ -111,6 +112,14 @@ function TasksPage() {
                   <span className={`badge ${task.status === 'completada' ? 'bg-success' : 'bg-warning'}`}>
                     {task.status === 'completada' ? 'Completada' : 'Incompleta'}
                   </span>
+                </td>
+                <td>
+                  <button 
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={() => navigate(`/tareas/editar/${task.id}`)}
+                  >
+                    Editar
+                  </button>
                 </td>
               </tr>
             ))
