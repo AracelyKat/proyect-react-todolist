@@ -47,3 +47,15 @@ export const updateTask = async (id, taskData) => {
   });
   return await response.json();
 };
+
+export const deleteTask = async (id) => {
+  const response = await fetch(`${API_URL}/tasks/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": `Bearer ${TOKEN}`,
+    },
+  });
+  return await response.json();
+};
