@@ -2,7 +2,7 @@ import apiFetch from './apiFetch';
 
 const TASK_ROUTE = 'tasks';
 
-export const getAll = () => apiFetch(TASK_ROUTE);
+export const getAll = (page = 1) => apiFetch(`${TASK_ROUTE}?pages=true&page=${page}`);
 
 export const getById = (id) => apiFetch(`${TASK_ROUTE}/${id}`);
 

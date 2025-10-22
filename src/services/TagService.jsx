@@ -2,7 +2,7 @@ import apiFetch from './apiFetch';
 
 const TAG_ROUTE = 'tags';
 
-export const getAll = () => apiFetch(TAG_ROUTE);
+export const getAll = (page = 1) => apiFetch(`${TAG_ROUTE}?pages=true&page=${page}`);
 
 export const getById = (id) => apiFetch(`${TAG_ROUTE}/${id}`);
 

@@ -2,7 +2,7 @@ import apiFetch from './apiFetch';
 
 const CATEGORY_ROUTE = 'categories';
 
-export const getAll = () => apiFetch(CATEGORY_ROUTE);
+export const getAll = (page = 1) => apiFetch(`${CATEGORY_ROUTE}?pages=true&page=${page}`);
 
 export const getById = (id) => apiFetch(`${CATEGORY_ROUTE}/${id}`);
 
