@@ -7,14 +7,42 @@ import EditCategory from './EditCategory';
 function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0
+  });
   const navigate = useNavigate();
 
-  const fetchCategories = async () => {
-    const result = await getAll().catch(() => null);
+  const fetchCategories = async (page = 1) => {
+    const result = await getAll(page).catch(() => null);
     if (result?.data) {
-      setCategories(result.data);
+      if (result.data.data) {
+        setCategories(result.data.data);
+        setPagination({
+          current_page: result.data.current_page,
+          last_page: result.data.last_page,
+          per_page: result.data.per_page,
+          total: result.data.total
+        });
+      } else {
+        setCategories(result.data);
+        setPagination({
+          current_page: 1,
+          last_page: 1,
+          per_page: result.data.length,
+          total: result.data.length
+        });
+      }
     } else {
       setCategories([]);
+      setPagination({
+        current_page: 1,
+        last_page: 1,
+        per_page: 10,
+        total: 0
+      });
     }
   };
 
@@ -26,7 +54,7 @@ function CategoriesPage() {
     if (window.confirm(`¿Estás seguro de que quieres eliminar la categoría "${name}"?`)) {
       const result = await deleteCategory(id);
       if (result?.message) {
-        fetchCategories();
+        fetchCategories(pagination.current_page);
       }
     }
   };
@@ -41,18 +69,24 @@ function CategoriesPage() {
 
   const handleUpdated = () => {
     setEditingId(null);
-    fetchCategories();
+    fetchCategories(pagination.current_page);
   };
 
   const handleView = (id) => {
     navigate(`/categorias/${id}`);
   };
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.last_page) {
+      fetchCategories(newPage);
+    }
+  };
+
   return (
     <div>
       <h2 className="text-primary mb-4">Gestión de Categorías</h2>
 
-      <CreateCategory onCreated={fetchCategories} />
+      <CreateCategory onCreated={() => fetchCategories(pagination.current_page)} />
 
       <table className="table table-bordered table-hover">
         <thead className="table-light">
@@ -70,7 +104,7 @@ function CategoriesPage() {
           ) : (
             categories.map((cat, index) => (
               <tr key={cat.id}>
-                <td>{index + 1}</td>
+                <td>{(pagination.current_page - 1) * pagination.per_page + index + 1}</td>
                 <td>
                   {editingId === cat.id ? (
                     <EditCategory 
@@ -113,6 +147,54 @@ function CategoriesPage() {
           )}
         </tbody>
       </table>
+
+      {pagination.last_page > 1 && (
+        <nav aria-label="Paginación de categorías">
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${pagination.current_page === 1 ? 'disabled' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => handlePageChange(pagination.current_page - 1)}
+                disabled={pagination.current_page === 1}
+              >
+                Anterior
+              </button>
+            </li>
+            
+            {[...Array(pagination.last_page)].map((_, index) => {
+              const pageNumber = index + 1;
+              return (
+                <li key={pageNumber} className={`page-item ${pagination.current_page === pageNumber ? 'active' : ''}`}>
+                  <button 
+                    className="page-link" 
+                    onClick={() => handlePageChange(pageNumber)}
+                  >
+                    {pageNumber}
+                  </button>
+                </li>
+              );
+            })}
+            
+            <li className={`page-item ${pagination.current_page === pagination.last_page ? 'disabled' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => handlePageChange(pagination.current_page + 1)}
+                disabled={pagination.current_page === pagination.last_page}
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
+
+      {categories.length > 0 && (
+        <div className="mt-3 text-center">
+          <small className="text-muted">
+            Mostrando {((pagination.current_page - 1) * pagination.per_page) + 1} - {Math.min(pagination.current_page * pagination.per_page, pagination.total)} de {pagination.total} categorías
+          </small>
+        </div>
+      )}
     </div>
   );
 }

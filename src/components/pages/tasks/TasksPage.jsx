@@ -9,17 +9,45 @@ function TasksPage() {
   const [error, setError] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(null);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0
+  });
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (page = 1) => {
     try {
       setLoading(true);
       setError('');
-      const result = await getAll();
+      const result = await getAll(page);
       
       if (result?.data) {
-        setTasks(result.data);
+        if (result.data.data) {
+          setTasks(result.data.data);
+          setPagination({
+            current_page: result.data.current_page,
+            last_page: result.data.last_page,
+            per_page: result.data.per_page,
+            total: result.data.total
+          });
+        } else {
+          setTasks(result.data);
+          setPagination({
+            current_page: 1,
+            last_page: 1,
+            per_page: result.data.length,
+            total: result.data.length
+          });
+        }
       } else {
         setTasks([]);
+        setPagination({
+          current_page: 1,
+          last_page: 1,
+          per_page: 10,
+          total: 0
+        });
       }
     } catch {
       setError('Error al cargar las tareas');
@@ -45,7 +73,7 @@ function TasksPage() {
     try {
       setDeleteLoading(taskId);
       await deleteTask(taskId);
-      await fetchTasks();
+      await fetchTasks(pagination.current_page);
     } catch {
       setError('Error al eliminar la tarea');
     } finally {
@@ -73,9 +101,15 @@ function TasksPage() {
       
     } catch {
       setError('Error al actualizar el estado de la tarea');
-      await fetchTasks();
+      await fetchTasks(pagination.current_page);
     } finally {
       setUpdateLoading(null);
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.last_page) {
+      fetchTasks(newPage);
     }
   };
 
@@ -130,7 +164,7 @@ function TasksPage() {
           ) : (
             tasks.map((task, index) => (
               <tr key={task.id} className={task.status === 'completada' ? 'table-success' : ''}>
-                <td>{index + 1}</td>
+                <td>{(pagination.current_page - 1) * pagination.per_page + index + 1}</td>
                 <td>
                   <div className="form-check">
                     <input
@@ -225,10 +259,50 @@ function TasksPage() {
         </tbody>
       </table>
 
+      {pagination.last_page > 1 && (
+        <nav aria-label="Paginación de tareas">
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${pagination.current_page === 1 ? 'disabled' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => handlePageChange(pagination.current_page - 1)}
+                disabled={pagination.current_page === 1}
+              >
+                Anterior
+              </button>
+            </li>
+            
+            {[...Array(pagination.last_page)].map((_, index) => {
+              const pageNumber = index + 1;
+              return (
+                <li key={pageNumber} className={`page-item ${pagination.current_page === pageNumber ? 'active' : ''}`}>
+                  <button 
+                    className="page-link" 
+                    onClick={() => handlePageChange(pageNumber)}
+                  >
+                    {pageNumber}
+                  </button>
+                </li>
+              );
+            })}
+            
+            <li className={`page-item ${pagination.current_page === pagination.last_page ? 'disabled' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => handlePageChange(pagination.current_page + 1)}
+                disabled={pagination.current_page === pagination.last_page}
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
+
       {tasks.length > 0 && (
-        <div className="mt-3">
+        <div className="mt-3 text-center">
           <small className="text-muted">
-            Total: {tasks.length} | 
+            Mostrando {((pagination.current_page - 1) * pagination.per_page) + 1} - {Math.min(pagination.current_page * pagination.per_page, pagination.total)} de {pagination.total} tareas | 
             Completadas: {tasks.filter(t => t.status === 'completada').length} | 
             Pendientes: {tasks.filter(t => t.status === 'incompleto').length}
           </small>
