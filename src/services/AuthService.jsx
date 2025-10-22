@@ -1,22 +1,11 @@
-import { API_URL } from './constants';
+import apiFetch from './apiFetch';
 
 export const AuthService = {
   async login(email, password) {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
+    const data = await apiFetch('login', {
+      method: 'POST',
+      body: { email, password },
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Credenciales incorrectas');
-    }
-    
-    const data = await response.json();
     
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
