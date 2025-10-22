@@ -1,11 +1,11 @@
-import { API_URL, TOKEN } from './constants';
+import { API_URL, getToken } from './constants';
 export const getAll = async () => {
   try {
     const response = await fetch(`${API_URL}/categories`, {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     });
     return await response.json();
@@ -22,7 +22,7 @@ export const createCategory = async (name) => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       body: JSON.stringify({ name }),
     });
@@ -41,7 +41,7 @@ export const updateCategory = async (id, name) => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       body: JSON.stringify({ name }),
     });
@@ -60,7 +60,7 @@ export const deleteCategory = async (id) => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     });
 
@@ -77,7 +77,7 @@ export const getById = async (id) => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     });
     return await response.json();

@@ -1,4 +1,4 @@
-import { API_URL, TOKEN } from './constants';
+import { API_URL, getToken } from './constants';
 
 export const getAll = async () => {
   try {
@@ -6,7 +6,7 @@ export const getAll = async () => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     });
     return await response.json();
@@ -23,7 +23,7 @@ export const createTag = async (name) => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       body: JSON.stringify({ name }),
     });
@@ -42,7 +42,7 @@ export const updateTag = async (id, name) => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       body: JSON.stringify({ name }),
     });
@@ -61,7 +61,7 @@ export const deleteTag = async (id) => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     });
 
@@ -78,7 +78,7 @@ export const getById = async (id) => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": `Bearer ${TOKEN}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     });
     return await response.json();
