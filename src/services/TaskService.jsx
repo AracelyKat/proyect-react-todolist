@@ -1,61 +1,23 @@
-import { API_URL, getToken} from './constants';
+import apiFetch from './apiFetch';
 
-export const getAll = async () => {
-  const response = await fetch(`${API_URL}/tasks`, {
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
-    },
-  });
-  return await response.json();
-};
+const TASK_ROUTE = 'tasks';
 
-export const createTask = async (taskData) => {
-  const response = await fetch(`${API_URL}/tasks`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(taskData),
-  });
-  return await response.json();
-};
+export const getAll = () => apiFetch(TASK_ROUTE);
 
-export const getById = async (id) => {
-  const response = await fetch(`${API_URL}/tasks/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
-    },
-  });
-  return await response.json();
-};
+export const getById = (id) => apiFetch(`${TASK_ROUTE}/${id}`);
 
-export const updateTask = async (id, taskData) => {
-  const response = await fetch(`${API_URL}/tasks/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(taskData),
-  });
-  return await response.json();
-};
+export const createTask = (taskData) => apiFetch(TASK_ROUTE, {
+  method: 'POST',
+  body: taskData,
+});
 
-export const deleteTask = async (id) => {
-  const response = await fetch(`${API_URL}/tasks/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
-    },
-  });
-  return await response.json();
-};
+export const updateTask = (id, taskData) => apiFetch(`${TASK_ROUTE}/${id}`, {
+  method: 'PUT',
+  body: taskData,
+});
+
+export const deleteTask = (id) => apiFetch(`${TASK_ROUTE}/${id}`, {
+  method: 'DELETE',
+});
+
+export default { getAll, getById, createTask, updateTask, deleteTask };

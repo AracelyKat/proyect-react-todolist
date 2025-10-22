@@ -1,88 +1,23 @@
-import { API_URL, getToken } from './constants';
-export const getAll = async () => {
-  try {
-    const response = await fetch(`${API_URL}/categories`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-    });
-    return await response.json();
-  } catch (error) {
-    console.error("Error en getAll() de categorías:", error);
-    return [];
-  }
-};
+import apiFetch from './apiFetch';
 
-export const createCategory = async (name) => {
-  try {
-    const response = await fetch(`${API_URL}/categories`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify({ name }),
-    });
+const CATEGORY_ROUTE = 'categories';
 
-    return await response.json();
-  } catch (error) {
-    console.error("Error al crear categoría:", error);
-    return null;
-  }
-};
+export const getAll = () => apiFetch(CATEGORY_ROUTE);
 
-export const updateCategory = async (id, name) => {
-  try {
-    const response = await fetch(`${API_URL}/categories/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify({ name }),
-    });
+export const getById = (id) => apiFetch(`${CATEGORY_ROUTE}/${id}`);
 
-    return await response.json();
-  } catch (error) {
-    console.error(`Error al actualizar categoría ${id}:`, error);
-    return null;
-  }
-};
+export const createCategory = (name) => apiFetch(CATEGORY_ROUTE, {
+  method: 'POST',
+  body: { name },
+});
 
-export const deleteCategory = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/categories/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-    });
+export const updateCategory = (id, name) => apiFetch(`${CATEGORY_ROUTE}/${id}`, {
+  method: 'PUT',
+  body: { name },
+});
 
-    return await response.json();
-  } catch (error) {
-    console.error(`Error al eliminar categoría ${id}:`, error);
-    return null;
-  }
-};
+export const deleteCategory = (id) => apiFetch(`${CATEGORY_ROUTE}/${id}`, {
+  method: 'DELETE',
+});
 
-export const getById = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/categories/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-    });
-    return await response.json();
-  } catch (error) {
-    console.error(`Error en getById(${id}) de categorías:`, error);
-    return null;
-  }
-};
+export default { getAll, getById, createCategory, updateCategory, deleteCategory };

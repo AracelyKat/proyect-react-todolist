@@ -1,89 +1,23 @@
-import { API_URL, getToken } from './constants';
+import apiFetch from './apiFetch';
 
-export const getAll = async () => {
-  try {
-    const response = await fetch(`${API_URL}/tags`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-    });
-    return await response.json();
-  } catch (error) {
-    console.error("Error en getAll() de etiquetas:", error);
-    return [];
-  }
-};
+const TAG_ROUTE = 'tags';
 
-export const createTag = async (name) => {
-  try {
-    const response = await fetch(`${API_URL}/tags`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify({ name }),
-    });
+export const getAll = () => apiFetch(TAG_ROUTE);
 
-    return await response.json();
-  } catch (error) {
-    console.error("Error al crear etiqueta:", error);
-    return null;
-  }
-};
+export const getById = (id) => apiFetch(`${TAG_ROUTE}/${id}`);
 
-export const updateTag = async (id, name) => {
-  try {
-    const response = await fetch(`${API_URL}/tags/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify({ name }),
-    });
+export const createTag = (name) => apiFetch(TAG_ROUTE, {
+  method: 'POST',
+  body: { name },
+});
 
-    return await response.json();
-  } catch (error) {
-    console.error(`Error al actualizar etiqueta ${id}:`, error);
-    return null;
-  }
-};
+export const updateTag = (id, name) => apiFetch(`${TAG_ROUTE}/${id}`, {
+  method: 'PUT',
+  body: { name },
+});
 
-export const deleteTag = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/tags/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-    });
+export const deleteTag = (id) => apiFetch(`${TAG_ROUTE}/${id}`, {
+  method: 'DELETE',
+});
 
-    return await response.json();
-  } catch (error) {
-    console.error(`Error al eliminar etiqueta ${id}:`, error);
-    return null;
-  }
-};
-
-export const getById = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/tags/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${getToken()}`,
-      },
-    });
-    return await response.json();
-  } catch (error) {
-    console.error(`Error en getById(${id}) de etiquetas:`, error);
-    return null;
-  }
-};
+export default { getAll, getById, createTag, updateTag, deleteTag };
